@@ -1,0 +1,30 @@
+# --- Third-party pieces: copied INTO the repo but never published ---
+# See the README "Toolchain" table for where to get each.
+
+# Patched XC=BASIC compiler fork (vinej/xc-basic3, branch debug-info) + its library.
+# Cloned here and built locally with DMD/DUB.
+/xcbasic-sdk/
+
+# DASM assembler (the backend XC=BASIC shells out to).
+/dasm-sdk/
+
+# Box16 fork (binary-monitor build) + ROM.
+/emulator/
+
+# --- Build / debug artifacts ---
+*.prg
+*.lst
+*.sym
+*.xcbmap.json
+*.dbj
+/build/
+/examples/*.prg
+
+# --- Editor / OS noise ---
+.dub/
+*.obj
+*.pdb
+__pycache__/
+*.pyc
+Thumbs.db
+.DS_Store

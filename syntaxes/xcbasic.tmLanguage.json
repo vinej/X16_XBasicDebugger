@@ -1,0 +1,77 @@
+{
+    "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+    "name": "XBasic",
+    "scopeName": "source.xcbasic",
+    "patterns": [
+        { "include": "#comments" },
+        { "include": "#strings" },
+        { "include": "#asmblock" },
+        { "include": "#keywords" },
+        { "include": "#types" },
+        { "include": "#numbers" },
+        { "include": "#labels" }
+    ],
+    "repository": {
+        "comments": {
+            "patterns": [
+                {
+                    "name": "comment.line.apostrophe.xcbasic",
+                    "match": "'.*$"
+                },
+                {
+                    "name": "comment.line.rem.xcbasic",
+                    "match": "(?i)\\bREM\\b.*$"
+                }
+            ]
+        },
+        "strings": {
+            "name": "string.quoted.double.xcbasic",
+            "begin": "\"",
+            "end": "\"",
+            "patterns": [
+                { "name": "constant.character.escape.xcbasic", "match": "\\\\." }
+            ]
+        },
+        "asmblock": {
+            "name": "meta.embedded.asm.xcbasic",
+            "begin": "(?i)^\\s*ASM\\b",
+            "end": "(?i)^\\s*END\\s+ASM\\b",
+            "beginCaptures": { "0": { "name": "keyword.control.asm.xcbasic" } },
+            "endCaptures": { "0": { "name": "keyword.control.asm.xcbasic" } },
+            "patterns": [
+                { "name": "comment.line.semicolon.xcbasic", "match": ";.*$" }
+            ]
+        },
+        "keywords": {
+            "patterns": [
+                {
+                    "name": "keyword.control.xcbasic",
+                    "match": "(?i)\\b(IF|THEN|ELSE|ENDIF|FOR|TO|STEP|NEXT|DO|LOOP|WHILE|UNTIL|EXIT|SELECT|CASE|ENDSELECT|GOTO|GOSUB|ON|RETURN|CALL|END|SUB|FUNCTION|ENDFUNCTION|ENDTYPE|DECLARE)\\b"
+                },
+                {
+                    "name": "keyword.other.xcbasic",
+                    "match": "(?i)\\b(DIM|AS|LET|CONST|TYPE|STATIC|SHARED|FAST|INLINE|DATA|READ|PRINT|INPUT|GET|POKE|OPEN|CLOSE|LOAD|SAVE|WAIT|LOCATE|MEMSET|MEMCPY|MEMSHIFT|ORIGIN|INCBIN|INCLUDE|RANDOMIZE|SWAP|ERROR|IRQ|OPTION)\\b"
+                },
+                {
+                    "name": "keyword.operator.word.xcbasic",
+                    "match": "(?i)\\b(AND|OR|NOT|XOR|MOD)\\b"
+                }
+            ]
+        },
+        "types": {
+            "name": "storage.type.xcbasic",
+            "match": "(?i)\\b(BYTE|INT|WORD|LONG|FLOAT|STRING|DECIMAL)\\b"
+        },
+        "numbers": {
+            "patterns": [
+                { "name": "constant.numeric.hex.xcbasic", "match": "\\$[0-9A-Fa-f]+" },
+                { "name": "constant.numeric.binary.xcbasic", "match": "%[01]+" },
+                { "name": "constant.numeric.decimal.xcbasic", "match": "\\b[0-9]+(\\.[0-9]+)?\\b" }
+            ]
+        },
+        "labels": {
+            "name": "entity.name.label.xcbasic",
+            "match": "^\\s*([A-Za-z_][A-Za-z0-9_]*):"
+        }
+    }
+}

@@ -1,0 +1,50 @@
+# XC=BASIC debug-info patch (vinej/xc-basic3, branch debug-info)
+# Emits '; source:' line markers and '; var:' typed manifest into the
+# DASM assembly so a source-level debugger can build a line<->address map.
+# Apply with: patch -p1 < docs/debug-info.patch   (from the xc-basic3 root)
+
+--- a/source/compiler/compiler.d	2026-07-13 08:40:07.071401800 -0400
++++ b/source/compiler/compiler.d	2026-07-13 10:50:39.557814100 -0400
+@@ -248,6 +248,18 @@
+                             this.currentFileId = savedFileId;
+                         }
+                         else {
++                            // --- XC=BASIC debug-info hook (vinej fork): emit a source-line
++                            // marker before each user statement so a debugger can map
++                            // .bas line -> machine address via the DASM listing. ---
++                            if(this.compilingUserCode) {
++                                SourceFile _dbgFile = SourceFile.findInContainer(this.currentFileName);
++                                immutable ulong _dbgLine = count(_dbgFile.getSourceCode()[0 .. child.begin], '\n') + 1;
++                                this.getImCode().appendProgramSegment(
++                                    "; source: " ~ this.currentFileId ~ " " ~ this.currentFileName
++                                    ~ ":" ~ to!string(_dbgLine) ~ "\n"
++                                );
++                            }
++                            // --- end debug-info hook ---
+                             Statement stmt = stmtFactory(child, this);
+                             if(this.inTypeDef && !this.inMethod
+                                 && stmt.classinfo.name != "statement.rem_stmt.Rem_stmt"
+--- a/source/compiler/variable.d	2026-07-13 08:40:07.085586200 -0400
++++ b/source/compiler/variable.d	2026-07-13 10:49:42.884457100 -0400
+@@ -221,7 +221,20 @@
+             else {
+                 code = variable.getAsmLabel() ~ " DS.B " ~ to!string(length) ~ "\n";
+             }
+-            this.compiler.getImCode().appendSegment(IntermediateCode.VAR_SEGMENT, code);
++            // --- XC=BASIC debug-info hook (vinej fork): emit a typed variable
++            // manifest so a debugger can format values by type/dimensions.
++            // Address is resolved from the DASM symbol dump by getAsmLabel(). ---
++            string _dbgVar = "; var: " ~ variable.getAsmLabel()
++                ~ " type=" ~ variable.type.name
++                ~ " single=" ~ to!string(variable.getSingleLength())
++                ~ " dims=" ~ to!string(variable.dimensions[0]) ~ "," ~ to!string(variable.dimensions[1])
++                ~ "," ~ to!string(variable.dimensions[2])
++                ~ " vis=" ~ to!string(variable.visibility)
++                ~ " file=" ~ variable.fileId
++                ~ (variable.procName != "" ? (" proc=" ~ variable.procName) : "")
++                ~ "\n";
++            // --- end debug-info hook ---
++            this.compiler.getImCode().appendSegment(IntermediateCode.VAR_SEGMENT, _dbgVar ~ code);
+         }
+     }
+ 

@@ -1,0 +1,138 @@
+{
+    "name": "x16-xbasic-debug",
+    "displayName": "X16 XBasic Debugger",
+    "description": "XC=BASIC (XBasic) on the Commander X16: source-level debugging via the Box16 fork's binary monitor, plus syntax highlighting for .bas files.",
+    "version": "0.1.0",
+    "publisher": "vinej",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/vinej/X16_XBasicDebugger"
+    },
+    "engines": {
+        "vscode": "^1.75.0"
+    },
+    "categories": [
+        "Debuggers",
+        "Programming Languages"
+    ],
+    "main": "./extension.js",
+    "activationEvents": [
+        "onLanguage:xcbasic"
+    ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "xcbasic",
+                "aliases": [
+                    "XBasic",
+                    "XC=BASIC"
+                ],
+                "extensions": [
+                    ".bas"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "xcbasic",
+                "scopeName": "source.xcbasic",
+                "path": "./syntaxes/xcbasic.tmLanguage.json"
+            }
+        ],
+        "breakpoints": [
+            {
+                "language": "xcbasic"
+            }
+        ],
+        "debuggers": [
+            {
+                "type": "xcbasic",
+                "label": "XBasic X16 (Box16)",
+                "languages": [
+                    "xcbasic"
+                ],
+                "configurationAttributes": {
+                    "launch": {
+                        "required": [
+                            "program"
+                        ],
+                        "properties": {
+                            "program": {
+                                "type": "string",
+                                "description": "The .bas source file to compile and debug."
+                            },
+                            "target": {
+                                "type": "string",
+                                "description": "XC=BASIC target machine.",
+                                "default": "x16"
+                            },
+                            "box16": {
+                                "type": "string",
+                                "description": "Path to the Box16 fork (vinej/box16, branch binary-monitor). Default: this repo's emulator\\box16.exe."
+                            },
+                            "rom": {
+                                "type": "string",
+                                "description": "X16 rom.bin. Default: this repo's emulator\\rom.bin."
+                            },
+                            "xcbasic": {
+                                "type": "string",
+                                "description": "Path to the debug-info xcbasic3 build (vinej/xc-basic3 branch debug-info). Default: this repo's xcbasic-sdk\\bin\\Windows\\xcbasic3.exe."
+                            },
+                            "dasm": {
+                                "type": "string",
+                                "description": "Path to dasm.exe. Default: this repo's dasm-sdk\\dasm.exe."
+                            },
+                            "stopOnEntry": {
+                                "type": "boolean",
+                                "description": "Break on the program's first statement.",
+                                "default": false
+                            },
+                            "scale": {
+                                "type": "number",
+                                "description": "Box16 window scale.",
+                                "default": 1
+                            },
+                            "host": {
+                                "type": "string",
+                                "default": "127.0.0.1"
+                            },
+                            "port": {
+                                "type": "number",
+                                "default": 6502
+                            },
+                            "python": {
+                                "type": "string",
+                                "description": "Python 3 interpreter used to run the adapter.",
+                                "default": "python"
+                            }
+                        }
+                    }
+                },
+                "initialConfigurations": [
+                    {
+                        "type": "xcbasic",
+                        "request": "launch",
+                        "name": "Debug XBasic program",
+                        "program": "${workspaceFolder}/examples/demo.bas",
+                        "stopOnEntry": true
+                    }
+                ],
+                "configurationSnippets": [
+                    {
+                        "label": "XBasic X16: Launch in Box16",
+                        "description": "Compile with the debug-info xcbasic3, run in the Box16 fork, debug at .bas source level",
+                        "body": {
+                            "type": "xcbasic",
+                            "request": "launch",
+                            "name": "Debug ${1:program}.bas",
+                            "program": "^\"\\${workspaceFolder}/${1:program}.bas\"",
+                            "stopOnEntry": true
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}
