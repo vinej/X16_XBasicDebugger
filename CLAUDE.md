@@ -53,12 +53,17 @@ assembly → assembles with **DASM** → native `.prg`. So this is a twin of
 
 - Upstream `neilsf/xc-basic3` is public + **MIT** — forking/patching allowed; we
   retain Csaba Fekete's LICENSE and add ours below it.
-- **CRITICAL base-version fact**: upstream `main` is v3.1.12 and has **NO x16
-  target**. Commander X16 support lives in the `feature/x16-support` line, tagged
-  **`v3.2.0-beta`** (af1a5d9). The local `X16_XCBasic` checkout == `v3.2.0-beta`
-  byte-for-byte modulo line endings. The debug-info branch is therefore based on
-  `v3.2.0-beta`, NOT main. (Upstream also has a `feature/debugging` branch —
-  unused by us.)
+- **Base-version fact**: the debug-info branch is based on tag **`v3.2.0-beta`**
+  (af1a5d9), the first release with the x16 target. The local `X16_XCBasic`
+  checkout == `v3.2.0-beta` byte-for-byte modulo line endings. (2026-07-13
+  update: upstream has since merged x16 into `main`/`develop` — af1a5d9 IS an
+  ancestor of both — and fixed ~50 bugs after the tag. We cherry-picked the 7
+  that matter — #234 line numbers, #236 string stack, #238 LONG division sign,
+  #267 TI(), + X16 lib fixes — see `xcbasic-sdk/issues_fix.md`. Skipped
+  upstream 34a839e (#268 PROCESSOR): our c3f9d75 fixes it differently. Still
+  open upstream: #285 SHARED sub via nested INCLUDE, #263 string+SELECT CASE
+  in FUNCTION, #246 @ on TYPE field. Verified after picks: demo+bounce compile,
+  full dap_smoke PASS, warnings now show correct line numbers.)
 - **Fork is created and pushed**: `vinej/xc-basic3` branch `debug-info` =
   `v3.2.0-beta` + our 2-file patch (commit a393cab). Cloned into `xcbasic-sdk/`
   (gitignored), with `upstream` remote → neilsf. Patch also saved as
