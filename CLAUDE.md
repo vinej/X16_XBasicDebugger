@@ -88,7 +88,10 @@ assembly → assembles with **DASM** → native `.prg`. So this is a twin of
   table telling users where to get them.
 - Claude verifies CLI-first; interactive VSCode tests are handed to the user with
   precise steps.
-- This repo: not yet a git repo, no commits, no GitHub remote yet.
+- This repo: published at https://github.com/vinej/X16_XBasicDebugger (public,
+  MIT, branch `master`). Commit/push after the user confirms features work.
+  The GitHub repo was created via the REST API using the Git Credential Manager
+  token (gh CLI is not authenticated); `git push` works through that credential.
 
 ## Status (2026-07-13) — M0–M4 DONE, verified live
 
