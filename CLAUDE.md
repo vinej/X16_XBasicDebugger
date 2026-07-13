@@ -142,3 +142,9 @@ Hard-won XBasic facts (don't re-derive):
   regs + FAST window). `x16_library` KERNAL regs r0-r15 ($02-$21) don't clash.
 - `posx=posx+velx` etc. do 24-bit fixed-point in XBasic LONG; `/256` → pixel
   (WORD) with an expected downcast warning.
+- **16-bit constant overflow**: a constant expression like `(640-16-1)*256`
+  (=159488) folds in 16-bit and wraps to 28416 even when assigned to a LONG —
+  and for the Y bound it wrapped to a *negative* signed value, freezing motion.
+  Fix: compute such values in LONG steps at runtime (`x = 623` then `x = x*256`).
+  Debugged live by reading `posx/posy/velx` over frames via the monitor — a good
+  worked example of using the debugger itself to find a logic bug.
