@@ -23,7 +23,7 @@ assembly → assembles with **DASM** → native `.prg`. So this is a twin of
 - `c:\quartus\projects\x16_CDebugger` — the six-toolchain base; hosts the shared
   Box16 fork clone `box16-src` and the emulator/ROM. Fork changes must keep
   `box16-src\test\binmon_test.py` green (six existing debug flows).
-- `c:\quartus\projects\X16_XBasic` — a pristine checkout of upstream XC=BASIC
+- `c:\quartus\projects\X16_XCBasic` — a pristine checkout of upstream XC=BASIC
   v3.2.0 (the source we analyzed). Leave it alone; our patched copy is the fork.
 
 ## Verified facts (do not re-derive)
@@ -55,7 +55,7 @@ assembly → assembles with **DASM** → native `.prg`. So this is a twin of
   retain Csaba Fekete's LICENSE and add ours below it.
 - **CRITICAL base-version fact**: upstream `main` is v3.1.12 and has **NO x16
   target**. Commander X16 support lives in the `feature/x16-support` line, tagged
-  **`v3.2.0-beta`** (af1a5d9). The local `X16_XBasic` checkout == `v3.2.0-beta`
+  **`v3.2.0-beta`** (af1a5d9). The local `X16_XCBasic` checkout == `v3.2.0-beta`
   byte-for-byte modulo line endings. The debug-info branch is therefore based on
   `v3.2.0-beta`, NOT main. (Upstream also has a `feature/debugging` branch —
   unused by us.)
