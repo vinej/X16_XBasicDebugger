@@ -4,13 +4,6 @@
         {
             "type": "xcbasic",
             "request": "launch",
-            "name": "Debug demo.bas in Box16",
-            "program": "${workspaceFolder}/examples/demo.bas",
-            "stopOnEntry": true
-        },
-        {
-            "type": "xcbasic",
-            "request": "launch",
             "name": "Debug current .bas in Box16",
             "program": "${file}",
             "stopOnEntry": true
