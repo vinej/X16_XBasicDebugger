@@ -119,3 +119,26 @@ Next (M5): `INCLUDE` multi-file, dynamic-local frames, decimal formatting,
 in-core line stepping for speed.
 
 Adapter trace: env `XCBASIC_DAP_LOG=<file>`. Test program: `examples/demo.bas`.
+
+## x16_library integration (2026-07-13)
+
+`examples/bounce.bas` recreates the `c:\quartus\projects\x16_library` (DASM)
+bounce demo in XBasic; `examples/x16lib.bas` catalogues the wrapper subs. New
+fork changes on `debug-info` (committed + pushed): x16 target now emits
+`PROCESSOR 65c02` (`intermediatecode.d`) and the 25 runtime `lib/*.asm` files'
+`PROCESSOR 6502` is target-aware — the X16 is a 65C02 and DASM allows only one
+processor type, so the whole assembly (runtime + library) must agree.
+
+Hard-won XBasic facts (don't re-derive):
+- **Inline asm**: `asm … end asm`, each line verbatim; `{varname}` → the var's
+  asm label/const (so wrappers read STATIC params into A/X/Y/X16_P*).
+- **INCLUDE can't share subs**: a `CALL` to a SUB defined in an INCLUDEd file
+  errors "Unknown identifier" (INCLUDE is processed too late). Wrappers must be
+  in the same .bas as callers. `DECLARE` needs an exact-matching prototype.
+- **Block IF uses `END IF`** (two words), not `ENDIF`; `IF c THEN`<nl>…`END IF`.
+  Single-line `IF c THEN stmt` also works.
+- **`VOICE` is a reserved keyword** (sound stmt) — can't be a param name.
+- Library ZP relocated to `X16_ZP = $70` (clears XC=BASIC's `$22–$34` pseudo-
+  regs + FAST window). `x16_library` KERNAL regs r0-r15 ($02-$21) don't clash.
+- `posx=posx+velx` etc. do 24-bit fixed-point in XBasic LONG; `/256` → pixel
+  (WORD) with an expected downcast warning.

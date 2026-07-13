@@ -171,6 +171,37 @@ this machine at `C:\D\dmd2\windows\bin64`, on the Machine PATH). Rebuild with:
 cd xcbasic-sdk && dub build && cp xcbasic3.exe bin/Windows/xcbasic3.exe
 ```
 
+## Using the DASM x16_library from XBasic
+
+XBasic can drive a hand-written 65C02 assembly library through inline `asm`
+blocks. `examples/bounce.bas` is a full worked example: the
+[x16_library](https://github.com/vinej/x16_library) bounce demo re-created in
+XBasic — a frame-locked sprite bouncing on 8.8 fixed-point velocity with PSG
+blips and a YM2151 FM note on box collision. The graphics/sound come from the
+library; the physics and AABB collision are plain XBasic (breakpoint the move
+code and watch `posx`/`velx` in the Variables pane). `examples/x16lib.bas` is
+the catalogue of thin SUB/FUNCTION wrappers it uses.
+
+Four things make this work (all now handled):
+
+1. **65C02.** The X16 is a 65C02, but stock XC=BASIC emitted `PROCESSOR 6502`,
+   so the library's `trb/tsb/stz` would not assemble. The fork now targets
+   `65c02` for `-t x16` (see `docs/debug-info.patch`).
+2. **Inline asm + `{var}` substitution.** Inside `asm … end asm`, `{name}` is
+   replaced by an XBasic variable's address, so a wrapper reads its `STATIC`
+   params straight into the library's `A/X/Y`/`X16_P*` calling convention.
+3. **Zero page.** The library's scratch is relocated with `X16_ZP = $70` to
+   clear XC=BASIC's pseudo-registers (`$22–$34`) and FAST-var window; keep FAST
+   vars below `$70`.
+4. **Paste, don't INCLUDE.** XC=BASIC resolves `INCLUDE` too late in its
+   compile for cross-file `SUB` calls, so wrappers must live in the same `.bas`
+   as their callers (the `INCDIR`/`INCLUDE "x16.asm"` asm blocks are fine to
+   include). `bounce.bas` inlines its wrappers for this reason.
+
+`bounce.bas`/`x16lib.bas` reference the library at
+`C:/quartus/projects/x16_library/src_dasm` via `INCDIR` — adjust that path for
+your checkout.
+
 ## License
 
 MIT — see [LICENSE](LICENSE). The bundled XC=BASIC fork keeps its own upstream

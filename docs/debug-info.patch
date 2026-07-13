@@ -1,11 +1,14 @@
-# XC=BASIC debug-info patch (vinej/xc-basic3, branch debug-info)
-# Emits '; source:' line markers and '; var:' typed manifest into the
-# DASM assembly so a source-level debugger can build a line<->address map.
-# Apply with: patch -p1 < docs/debug-info.patch   (from the xc-basic3 root)
+# XC=BASIC debug-info + x16-65C02 patch (vinej/xc-basic3, branch debug-info)
+# Compiler source changes vs upstream tag v3.2.0-beta. In addition to
+# what is shown here, 25 lib/*.asm runtime files had their line-1
+# 'PROCESSOR 6502' made target-aware (65c02 for x16) -- too bulky to
+# inline; see the branch. Apply source changes: patch -p1 < this-file
 
---- a/source/compiler/compiler.d	2026-07-13 08:40:07.071401800 -0400
-+++ b/source/compiler/compiler.d	2026-07-13 10:50:39.557814100 -0400
-@@ -248,6 +248,18 @@
+diff --git a/source/compiler/compiler.d b/source/compiler/compiler.d
+index 90ebf50..0a45592 100644
+--- a/source/compiler/compiler.d
++++ b/source/compiler/compiler.d
+@@ -248,6 +248,18 @@ final class Compiler
                              this.currentFileId = savedFileId;
                          }
                          else {
@@ -24,9 +27,29 @@
                              Statement stmt = stmtFactory(child, this);
                              if(this.inTypeDef && !this.inMethod
                                  && stmt.classinfo.name != "statement.rem_stmt.Rem_stmt"
---- a/source/compiler/variable.d	2026-07-13 08:40:07.085586200 -0400
-+++ b/source/compiler/variable.d	2026-07-13 10:49:42.884457100 -0400
-@@ -221,7 +221,20 @@
+diff --git a/source/compiler/intermediatecode.d b/source/compiler/intermediatecode.d
+index 4ab047e..2cca300 100644
+--- a/source/compiler/intermediatecode.d
++++ b/source/compiler/intermediatecode.d
+@@ -58,8 +58,11 @@ class IntermediateCode
+         // Bits 15-8: base machine
+         // Bits 7-0: machine config 
+         string startUpCode =
+-`    PROCESSOR 6502
+-c64      EQU %0000000100000000
++// The Commander X16 CPU is a 65C02 (trb/tsb/stz/bra/phx...); emit that so
++// programs and included asm libraries can use its extra opcodes. 65C02 is a
++// superset of 6502, so the runtime's own 6502 code assembles unchanged.
++"    PROCESSOR " ~ (target == "x16" ? "65c02" : "6502") ~ "\n" ~
++`c64      EQU %0000000100000000
+ vic20    EQU %0000001000000000
+ vic20_3k EQU %0000001000000001
+ vic20_8k EQU %0000001000000010
+diff --git a/source/compiler/variable.d b/source/compiler/variable.d
+index fef25cb..b86969e 100644
+--- a/source/compiler/variable.d
++++ b/source/compiler/variable.d
+@@ -221,7 +221,20 @@ class VariableCollection
              else {
                  code = variable.getAsmLabel() ~ " DS.B " ~ to!string(length) ~ "\n";
              }
