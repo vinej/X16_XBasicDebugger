@@ -67,7 +67,10 @@ list file with their addresses**, so the map is a single-file parse:
 The patched compiler is **[vinej/xc-basic3](https://github.com/vinej/xc-basic3),
 branch `debug-info`** — a fork of upstream
 [neilsf/xc-basic3](https://github.com/neilsf/xc-basic3) (MIT), based on tag
-**`v3.2.0-beta`**. This base matters: upstream `main` is v3.1.12 and has **no
+**`v3.2.0-beta`**. **You must build and use this branch to debug:** the stock
+`v3.2.0-beta` compiler emits no source-line/variable markers, so its `.prg` has
+nothing to map back to `.bas` — only a compiler built from `debug-info` produces
+the debug info this project relies on. This base matters: upstream `main` is v3.1.12 and has **no
 X16 target at all** — Commander X16 support first appears in the
 `feature/x16-support` work that became `v3.2.0-beta`. The branch is cloned into
 `xcbasic-sdk/` (gitignored) and built locally with DMD/DUB. The two-file change
